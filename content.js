@@ -21,7 +21,7 @@ async function downloadAndNavigate() {
           // nextPageLink.click();
           window.location.href = nextPageLink.href;
           await new Promise(resolve => setTimeout(resolve, 20000));
-          
+
         } else {
           console.log("No more pages to process.");
         }
@@ -30,5 +30,8 @@ async function downloadAndNavigate() {
   }
   
   // Start the download and navigation process
-  downloadAndNavigate();
+  if (!window.processed) {
+    window.processed = true; // Prevent re-processing the same page
+    downloadAndNavigate();
+  }
   

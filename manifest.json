@@ -3,7 +3,9 @@
   "name": "Lotus Crawler",
   "version": "1.0",
   "permissions": ["downloads", "scripting", "tabs"],
-  "host_permissions": ["<all_urls>"],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "background": {
     "service_worker": "background.js"
   },

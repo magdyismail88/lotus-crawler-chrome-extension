@@ -3,15 +3,32 @@ function sleep(ms) {
 }
 
 async function handleHCaptcha() {
-  const captchaAnchor = document.getElementById('anchor');
-  if (captchaAnchor) {
-    console.log("h-captcha detected. Clicking on the anchor...");
-    captchaAnchor.click(); // Trigger a click event on the anchor element
-    await sleep(2000); // Give some time for the click action to take effect
-    return true; // Indicates h-captcha was handled
+  // Locate all iframe elements on the page
+  const iframes = document.querySelectorAll('iframe');
+
+  // Iterate through each iframe to find the one containing #anchor
+  for (const iframe of iframes) {
+    try {
+      // Access the iframe's document
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+      // Locate the anchor element inside the iframe
+      const captchaAnchor = iframeDoc.querySelector('#anchor');
+      if (captchaAnchor) {
+        console.log("h-captcha anchor detected inside iframe. Clicking...");
+        captchaAnchor.click(); // Simulate a click on the anchor element
+        await sleep(2000); // Wait for 2 seconds for the action to take effect
+        return true; // Indicate h-captcha was handled
+      }
+    } catch (error) {
+      console.error("Error accessing iframe content:", error);
+    }
   }
-  return false; // No h-captcha detected
+
+  console.log("No h-captcha anchor found in any iframe.");
+  return false; // Indicate no h-captcha was handled
 }
+
 
 async function scrollToBottomTwice() {
   for (let i = 0; i < 2; i++) {
@@ -42,7 +59,7 @@ async function downloadAndNavigate() {
   chrome.runtime.sendMessage({
     action: "downloadHTML",
     htmlContent: document.documentElement.outerHTML
-  }, (response) => {
+  }, async (response) => {
     if (response && response.status === "Downloaded") {
       // Check for the next page
       const nextPageLink = document.querySelector('a[title="Go to next page"]');
@@ -53,7 +70,6 @@ async function downloadAndNavigate() {
         }
         
       } else {
-        window.location.href = 'https://scrapeme.live/shop'
         console.log("No more pages to process. Stopping.");
         chrome.runtime.sendMessage({ action: "processComplete" });
       }

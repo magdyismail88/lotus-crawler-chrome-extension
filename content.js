@@ -3,13 +3,14 @@ function sleep(ms) {
 }
 
 async function handleHCaptcha() {
-  const captchaAnchor = document.querySelector('#anchor');
+  const captchaAnchor = document.getElementById('anchor');
   if (captchaAnchor) {
     console.log("h-captcha detected. Clicking on the anchor...");
-    captchaAnchor.click();
-    return true; // Indicates that h-captcha was handled
+    captchaAnchor.click(); // Trigger a click event on the anchor element
+    await sleep(2000); // Give some time for the click action to take effect
+    return true; // Indicates h-captcha was handled
   }
-  return false; // Indicates no h-captcha was found
+  return false; // No h-captcha detected
 }
 
 async function scrollToBottomTwice() {
@@ -21,14 +22,21 @@ async function scrollToBottomTwice() {
 }
 
 async function downloadAndNavigate() {
-  // Check for h-captcha and handle it first
-  if (await handleHCaptcha()) {
-    console.log("Waiting for h-captcha to complete...");
-    return; // Stop further processing until h-captcha is resolved
+  // Handle h-captcha first
+  let captchaHandled = await handleHCaptcha();
+  if (captchaHandled) {
+    console.log("h-captcha clicked. Waiting for user action...");
+    return; // Stop further actions until h-captcha is resolved
   }
 
-  // Scroll to the bottom of the page twice with a delay
+  // Scroll to the bottom of the page twice
   await scrollToBottomTwice();
+
+  captchaHandled = await handleHCaptcha();
+  if (captchaHandled) {
+    console.log("h-captcha clicked. Waiting for user action...");
+    return; // Stop further actions until h-captcha is resolved
+  }
 
   // Send HTML content to the background script for downloading
   chrome.runtime.sendMessage({
@@ -36,26 +44,25 @@ async function downloadAndNavigate() {
     htmlContent: document.documentElement.outerHTML
   }, (response) => {
     if (response && response.status === "Downloaded") {
-      // Check if there is a "next page" link
+      // Check for the next page
       const nextPageLink = document.querySelector('a[title="Go to next page"]');
       if (nextPageLink) {
         console.log("Navigating to the next page...");
-        const nextPageURI = nextPageLink.href;
-        if(nextPageURI !== '') {
-          window.location.href = nextPageURI;
+        if(nextPageLink.href && nextPageLink.href != '') {
+          window.location.href = nextPageLink.href;
         }
-
+        
       } else {
+        window.location.href = 'https://scrapeme.live/shop'
         console.log("No more pages to process. Stopping.");
-        // Optionally, send a message to the background script that processing is complete
         chrome.runtime.sendMessage({ action: "processComplete" });
       }
     }
   });
 }
 
-// Start the download and navigation process only once per page load
+// Start the process only once per page
 if (!window.processed) {
-  window.processed = true; // Prevent re-processing the same page
+  window.processed = true;
   downloadAndNavigate();
 }

@@ -1,0 +1,40 @@
+
+```bash
+my_extension/
+  ├── manifest.json
+  ├── background.js
+  ├── content.js
+  ├── popup/
+      ├── popup.html
+      ├── popup.js
+      ├── popup.css
+  ├── icons/
+      ├── icon16.png
+      ├── icon48.png
+      ├── icon128.png
+```
+
+
+google-chrome https://uae.dubizzle.com/motors/used-cars/volkswagen/golf/2024/8/7/2024-volkswagen-golf-pro-280tsi-14-turbo-2-522---d93c829231db4cc6a5b8de42a65d7b7a/
+
+i will make api to send url to the server and the server will send the url to the browser and when the browser opened the url the
+
+lotus extenstion will download this html content and i will read this html content from the downloaded html page and return again over the api
+
+but my problem now when i send url to the browser the tab will be still opening so i need to solution for that how can i close this tab after 
+
+html fetched and downloaded 
+
+google-chrome https://uae.dubizzle.com/motors/used-cars/volkswagen/golf/2024/8/7/2024-volkswagen-golf-pro-280tsi-14-turbo-2-522---d93c829231db4cc6a5b8de42a65d7b7a/
+
+
+google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 --no-sandbox https://uae.dubizzle.com/motors/used-cars/volkswagen/golf/2024/8/7/2024-volkswagen-golf-pro-280tsi-14-turbo-2-522---d93c829231db4cc6a5b8de42a65d7b7a/
+
+
+--enable-unsafe-swiftshader
+
+
+google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 --no-sandbox --enable-unsafe-swiftshader https://scrapeme.live/shop/Bulbasaur/
+
+
+google-chrome-stable https://scrapeme.live/shop/Bulbasaur/
